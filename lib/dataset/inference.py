@@ -26,14 +26,15 @@ from lib.data_utils.img_utils import get_single_image_crop_demo
 
 
 class Inference(Dataset):
-    def __init__(self, image_folder, frames, bboxes=None, joints2d=None, scale=1.0, crop_size=224):
-        self.image_file_names = [
-            osp.join(image_folder, x)
-            for x in os.listdir(image_folder)
-            if x.endswith('.png') or x.endswith('.jpg')
-        ]
-        self.image_file_names = sorted(self.image_file_names)
-        self.image_file_names = np.array(self.image_file_names)[frames]
+    def __init__(self, image, frames, bboxes=None, joints2d=None, scale=1.0, crop_size=224):
+        # self.image_file_names = [
+        #     osp.join(image_folder, x)
+        #     for x in os.listdir(image_folder)
+        #     if x.endswith('.png') or x.endswith('.jpg')
+        # ]
+        # self.image_file_names = sorted(self.image_file_names)
+        # self.image_file_names = np.array(self.image_file_names)[frames]
+        self.image = image
         self.bboxes = bboxes
         self.joints2d = joints2d
         self.scale = scale
@@ -48,16 +49,19 @@ class Inference(Dataset):
             bboxes[:, 2:] = 150. / bboxes[:, 2:]
             self.bboxes = np.stack([bboxes[:, 0], bboxes[:, 1], bboxes[:, 2], bboxes[:, 2]]).T
 
-            self.image_file_names = self.image_file_names[time_pt1:time_pt2]
+            # self.image_file_names = self.image_file_names[time_pt1:time_pt2]
             self.joints2d = joints2d[time_pt1:time_pt2]
             self.frames = frames[time_pt1:time_pt2]
 
     def __len__(self):
-        return len(self.image_file_names)
+        # return len(self.image_file_names)
+        # return len(self.images)
+        return 1
 
     def __getitem__(self, idx):
-        img = cv2.cvtColor(cv2.imread(self.image_file_names[idx]), cv2.COLOR_BGR2RGB)
-
+        # img = cv2.cvtColor(cv2.imread(self.image_file_names[idx]), cv2.COLOR_BGR2RGB)
+        # img = self.images[idx]
+        img = self.image
         bbox = self.bboxes[idx]
 
         j2d = self.joints2d[idx] if self.has_keypoints else None

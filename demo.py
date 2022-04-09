@@ -125,7 +125,7 @@ def main(args):
     vibe_results = {}
     for person_id in tqdm(list(tracking_results.keys())):
         bboxes = joints2d = None
-
+        # print (tracking_results[person_id])
         if args.tracking_method == 'bbox':
             bboxes = tracking_results[person_id]['bbox']
         elif args.tracking_method == 'pose':
@@ -261,7 +261,7 @@ def main(args):
 
     end = time.time()
     fps = num_frames / (end - vibe_time)
-
+    print(vibe_results)
     print(f'VIBE FPS: {fps:.2f}')
     total_time = time.time() - total_time
     print(f'Total time spent: {total_time:.2f} seconds (including model loading time).')
