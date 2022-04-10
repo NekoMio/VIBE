@@ -150,6 +150,7 @@ def main(args):
     bbox_scale = 1.1
     while ret:
 
+        start = time.time()
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cap.release()
             cv2.destroyAllWindows()
@@ -184,7 +185,7 @@ def main(args):
             frames = dataset.frames
             has_keypoints = True if joints2d is not None else False
 
-            dataloader = DataLoader(dataset, batch_size=args.vibe_batch_size, num_workers=16)
+            dataloader = DataLoader(dataset, batch_size=args.vibe_batch_size, num_workers=1)
             with torch.no_grad():
                 pred_cam, pred_verts, pred_pose, pred_betas, pred_joints3d, smpl_joints2d, norm_joints2d = [], [], [], [], [], [], []
 
@@ -261,7 +262,8 @@ def main(args):
         for person_id in list(vibe_results.keys()):
             quaternion_pose = trans_pose(vibe_results[person_id]['pose'])
             print(quaternion_pose)
-
+        end = time.time()
+        print(f'use Time {end - start}')
         ret, image = cap.read()
 
 
@@ -337,7 +339,7 @@ if __name__ == '__main__':
     parser.add_argument('--staf_dir', type=str, default='/home/mkocabas/developments/openposetrack',
                         help='path to directory STAF pose tracking method installed.')
 
-    parser.add_argument('--vibe_batch_size', type=int, default=450,
+    parser.add_argument('--vibe_batch_size', type=int, default=20,
                         help='batch size of VIBE')
 
     parser.add_argument('--tracking_method', type=str, default='bbox', choices=['bbox', 'pose'],
